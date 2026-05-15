@@ -21,6 +21,7 @@ function Suppliers() {
       const res = await getSuppliers();
       setSuppliers(res.data);
     } catch (err) {
+      alert("Failed to fetch suppliers");
       console.error("Error fetching suppliers:", err);
     }
   };
@@ -38,22 +39,35 @@ function Suppliers() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      if (editingId) {
+    if (editingId) {
+      try {
         await updateSupplier(editingId, newSupplier);
+        fetchSuppliers();
         setEditingId(null);
-      } else {
-        await createSupplier(newSupplier);
+        setNewSupplier({
+          name: "",
+          email: "",
+          phone: "",
+          address: "",
+        });
+      } catch (err) {
+        alert("Failed to update supplier");
+        console.error("Error updating supplier:", err);
       }
-      setNewSupplier({
-        name: "",
-        email: "",
-        phone: "",
-        address: "",
-      });
-      fetchSuppliers();
-    } catch (err) {
-      console.error("Error saving supplier:", err);
+    } else {
+      try {
+        await createSupplier(newSupplier);
+        fetchSuppliers();
+        setNewSupplier({
+          name: "",
+          email: "",
+          phone: "",
+          address: "",
+        });
+      } catch (err) {
+        alert("Failed to create supplier");
+        console.error("Error creating supplier:", err);
+      }
     }
   };
 
@@ -63,6 +77,7 @@ function Suppliers() {
         await deleteSupplier(id);
         fetchSuppliers();
       } catch (err) {
+        alert("Failed to delete supplier");
         console.error("Error deleting supplier:", err);
       }
     }

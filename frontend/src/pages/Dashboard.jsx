@@ -30,6 +30,7 @@ function Dashboard() {
         suppliers: supplierRes.data.length,
       });
     } catch (err) {
+      alert("Failed to fetch dashboard data");
       console.error("Error fetching dashboard data:", err);
     }
   };

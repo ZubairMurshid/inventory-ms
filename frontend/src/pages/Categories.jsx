@@ -24,6 +24,7 @@ function Categories() {
       const res = await getCategories();
       setCategories(res.data);
     } catch (err) {
+      alert("Failed to fetch categories");
       console.error("Error fetching categories:", err);
     }
   };
@@ -38,24 +39,31 @@ function Categories() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    try {
-      if (editingId) {
+    if (editingId) {
+      try {
         await updateCategory(editingId, newCategory);
+        fetchCategories();
         setEditingId(null);
-      } else {
-        await createCategory(newCategory);
+        setNewCategory({
+          name: "",
+          description: "",
+        });
+      } catch (err) {
+        alert("Failed to update category");
+        console.error("Error updating category:", err);
       }
-
-      // Reset form
-      setNewCategory({
-        name: "",
-        description: "",
-      });
-
-      // Refresh list
-      fetchCategories();
-    } catch (err) {
-      console.error("Error saving category:", err);
+    } else {
+      try {
+        await createCategory(newCategory);
+        fetchCategories();
+        setNewCategory({
+          name: "",
+          description: "",
+        });
+      } catch (err) {
+        alert("Failed to create category");
+        console.error("Error creating category:", err);
+      }
     }
   };
 
@@ -65,6 +73,7 @@ function Categories() {
         await deleteCategory(id);
         fetchCategories();
       } catch (err) {
+        alert("Failed to delete category");
         console.error("Error deleting category:", err);
       }
     }

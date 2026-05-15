@@ -26,6 +26,7 @@ function Products() {
       const res = await getProducts();
       setProducts(res.data);
     } catch (err) {
+      alert("Failed to fetch products");
       console.error("Error fetching products:", err);
     }
   };
@@ -50,33 +51,47 @@ function Products() {
       quantity: newProduct.quantity ? parseInt(newProduct.quantity, 10) : 0,
     };
 
-    try {
-      if (editingId) {
+    if (editingId) {
+      try {
         await updateProduct(editingId, productPayload);
+        fetchProducts();
         setEditingId(null);
-      } else {
-        await createProduct(productPayload);
+        setNewProduct({
+          name: "",
+          description: "",
+          price: "",
+          quantity: "",
+        });
+      } catch (err) {
+        alert("Failed to update product");
+        console.error("Error updating product:", err);
       }
-
-      setNewProduct({
-        name: "",
-        description: "",
-        price: "",
-        quantity: "",
-      });
-
-      fetchProducts();
-    } catch (err) {
-      console.error("Error saving product:", err);
+    } else {
+      try {
+        await createProduct(productPayload);
+        fetchProducts();
+        setNewProduct({
+          name: "",
+          description: "",
+          price: "",
+          quantity: "",
+        });
+      } catch (err) {
+        alert("Failed to create product");
+        console.error("Error creating product:", err);
+      }
     }
   };
 
   const handleDelete = async (id) => {
-    try {
-      await deleteProduct(id);
-      fetchProducts();
-    } catch (err) {
-      console.error("Error deleting product:", err);
+    if (window.confirm("Are you sure?")) {
+      try {
+        await deleteProduct(id);
+        fetchProducts();
+      } catch (err) {
+        alert("Failed to delete product");
+        console.error("Error deleting product:", err);
+      }
     }
   };
 
