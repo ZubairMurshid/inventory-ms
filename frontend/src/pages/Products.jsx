@@ -116,97 +116,140 @@ function Products() {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>Products</h1>
+    <div className="p-6">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold text-slate-800">Products</h1>
+      </div>
 
-      {/* FORM */}
-      <form onSubmit={handleSubmit} style={{ marginBottom: "20px" }}>
-        <input
-          type="text"
-          placeholder="Search products..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+      {/* FORM SECTION */}
+      <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 mb-8">
+        <h2 className="text-lg font-semibold mb-4 text-slate-700">
+          {editingId ? "Edit Product" : "Add New Product"}
+        </h2>
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <input
+            name="name"
+            placeholder="Product Name"
+            value={newProduct.name}
+            onChange={handleChange}
+            required
+            className="border border-slate-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+          />
+          <input
+            name="description"
+            placeholder="Description"
+            value={newProduct.description}
+            onChange={handleChange}
+            required
+            className="border border-slate-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+          />
+          <input
+            name="price"
+            type="number"
+            placeholder="Price"
+            value={newProduct.price}
+            onChange={handleChange}
+            required
+            className="border border-slate-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+          />
+          <input
+            name="quantity"
+            type="number"
+            placeholder="Quantity"
+            value={newProduct.quantity}
+            onChange={handleChange}
+            required
+            className="border border-slate-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+          />
+          <div className="lg:col-span-4 flex gap-2">
+            <button
+              type="submit"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors"
+            >
+              {editingId ? "Update Product" : "Add Product"}
+            </button>
+            {editingId && (
+              <button
+                type="button"
+                onClick={handleCancelEdit}
+                className="bg-slate-200 hover:bg-slate-300 text-slate-700 px-6 py-2 rounded-lg font-medium transition-colors"
+              >
+                Cancel
+              </button>
+            )}
+          </div>
+        </form>
+      </div>
 
-        <input
-          name="name"
-          placeholder="Name"
-          value={newProduct.name}
-          onChange={handleChange}
-          required
-        />
+      {/* SEARCH AND TABLE SECTION */}
+      <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+        <div className="p-4 border-b border-slate-200 bg-slate-50/50">
+          <input
+            type="text"
+            placeholder="Search products..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="border border-slate-300 rounded-lg px-4 py-2 w-full max-w-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+          />
+        </div>
 
-        <input
-          name="description"
-          placeholder="Description"
-          value={newProduct.description}
-          onChange={handleChange}
-          required
-        />
-
-        <input
-          name="price"
-          type="number"
-          placeholder="Price"
-          value={newProduct.price}
-          onChange={handleChange}
-          required
-        />
-
-        <input
-          name="quantity"
-          type="number"
-          placeholder="Quantity"
-          value={newProduct.quantity}
-          onChange={handleChange}
-          required
-        />
-
-        <button type="submit">
-          {editingId ? "Update Product" : "Add Product"}
-        </button>
-
-        {editingId && (
-          <button type="button" onClick={handleCancelEdit}>
-            Cancel
-          </button>
-        )}
-      </form>
-
-      {/* TABLE */}
-      <table border="1" cellPadding="10">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Price</th>
-            <th>Quantity</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {products
-            .filter((product) =>
-              product.name.toLowerCase().includes(search.toLowerCase()),
-            )
-            .map((p) => (
-              <tr key={p.id}>
-                <td>{p.id}</td>
-                <td>{p.name}</td>
-                <td>{p.description}</td>
-                <td>{p.price}</td>
-                <td>{p.quantity}</td>
-
-                <td>
-                  <button onClick={() => handleEdit(p)}>Edit</button>
-                  <button onClick={() => handleDelete(p.id)}>Delete</button>
-                </td>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left">
+            <thead className="bg-slate-50 text-slate-600 font-medium">
+              <tr>
+                <th className="p-4 border-b border-slate-200">ID</th>
+                <th className="p-4 border-b border-slate-200">Name</th>
+                <th className="p-4 border-b border-slate-200">Description</th>
+                <th className="p-4 border-b border-slate-200 text-right">Price</th>
+                <th className="p-4 border-b border-slate-200 text-right">Qty</th>
+                <th className="p-4 border-b border-slate-200 text-center">Actions</th>
               </tr>
-            ))}
-        </tbody>
-      </table>
+            </thead>
+
+            <tbody className="divide-y divide-slate-100">
+              {products
+                .filter((product) =>
+                  product.name.toLowerCase().includes(search.toLowerCase())
+                )
+                .map((p) => (
+                  <tr key={p.id} className="hover:bg-slate-50 transition-colors">
+                    <td className="p-4 text-slate-500 text-sm font-mono">{p.id}</td>
+                    <td className="p-4 font-medium text-slate-800">{p.name}</td>
+                    <td className="p-4 text-slate-600">{p.description}</td>
+                    <td className="p-4 text-right text-slate-700 font-semibold">${p.price}</td>
+                    <td className="p-4 text-right">
+                      <span className={`px-2 py-1 rounded text-xs font-bold ${p.quantity < 10 ? 'bg-red-100 text-red-600' : 'bg-emerald-100 text-emerald-600'}`}>
+                        {p.quantity}
+                      </span>
+                    </td>
+
+                    <td className="p-4 text-center">
+                      <div className="flex justify-center gap-2">
+                        <button
+                          onClick={() => handleEdit(p)}
+                          className="text-emerald-600 hover:text-emerald-700 font-medium text-sm"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDelete(p.id)}
+                          className="text-red-500 hover:text-red-600 font-medium text-sm"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+          {products.length === 0 && (
+            <div className="p-8 text-center text-slate-500">
+              No products found. Add your first product above!
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

@@ -15,10 +15,6 @@ function Categories() {
     description: "",
   });
 
-  useEffect(() => {
-    fetchCategories();
-  }, []);
-
   const fetchCategories = async () => {
     try {
       const res = await getCategories();
@@ -28,6 +24,10 @@ function Categories() {
       console.error("Error fetching categories:", err);
     }
   };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
   const handleChange = (e) => {
     setNewCategory({
@@ -96,67 +96,99 @@ function Categories() {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>Categories</h1>
+    <div className="p-6">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold text-slate-800">Categories</h1>
+      </div>
 
-      {/* FORM */}
-      <form onSubmit={handleSubmit} style={{ marginBottom: "20px" }}>
-        <input
-          name="name"
-          placeholder="Category name"
-          value={newCategory.name}
-          onChange={handleChange}
-          required
-        />
-        <input
-          name="description"
-          placeholder="Description"
-          value={newCategory.description}
-          onChange={handleChange}
-          required
-        />
+      {/* FORM SECTION */}
+      <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 mb-8">
+        <h2 className="text-lg font-semibold mb-4 text-slate-700">
+          {editingId ? "Edit Category" : "Add New Category"}
+        </h2>
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl">
+          <input
+            name="name"
+            placeholder="Category Name"
+            value={newCategory.name}
+            onChange={handleChange}
+            required
+            className="border border-slate-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+          />
+          <input
+            name="description"
+            placeholder="Description"
+            value={newCategory.description}
+            onChange={handleChange}
+            required
+            className="border border-slate-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+          />
+          <div className="md:col-span-2 flex gap-2">
+            <button
+              type="submit"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors"
+            >
+              {editingId ? "Update Category" : "Add Category"}
+            </button>
+            {editingId && (
+              <button
+                type="button"
+                onClick={handleCancelEdit}
+                className="bg-slate-200 hover:bg-slate-300 text-slate-700 px-6 py-2 rounded-lg font-medium transition-colors"
+              >
+                Cancel
+              </button>
+            )}
+          </div>
+        </form>
+      </div>
 
-        <button type="submit">
-          {editingId ? "Update Category" : "Add Category"}
-        </button>
+      {/* TABLE SECTION */}
+      <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead className="bg-slate-50 text-slate-600 font-medium">
+              <tr>
+                <th className="p-4 border-b border-slate-200 w-24">ID</th>
+                <th className="p-4 border-b border-slate-200">Name</th>
+                <th className="p-4 border-b border-slate-200">Description</th>
+                <th className="p-4 border-b border-slate-200 text-center w-40">Actions</th>
+              </tr>
+            </thead>
 
-        {editingId && (
-          <button type="button" onClick={handleCancelEdit}>
-            Cancel
-          </button>
-        )}
-      </form>
-
-      {/* TABLE */}
-      <table border="1" cellPadding="10" style={{ width: "100%", borderCollapse: "collapse" }}>
-        <thead>
-          <tr style={{ backgroundColor: "#f2f2f2" }}>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {categories.map((c) => (
-            <tr key={c.id}>
-              <td>{c.id}</td>
-              <td>{c.name}</td>
-              <td>{c.description}</td>
-              <td>
-                <button onClick={() => handleEdit(c)}>Edit</button>
-                <button 
-                  onClick={() => handleDelete(c.id)} 
-                  style={{ marginLeft: "10px", color: "red" }}
-                >
-                  Delete
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+            <tbody className="divide-y divide-slate-100">
+              {categories.map((c) => (
+                <tr key={c.id} className="hover:bg-slate-50 transition-colors">
+                  <td className="p-4 text-slate-500 text-sm font-mono">{c.id}</td>
+                  <td className="p-4 font-medium text-slate-800">{c.name}</td>
+                  <td className="p-4 text-slate-600">{c.description}</td>
+                  <td className="p-4 text-center">
+                    <div className="flex justify-center gap-4">
+                      <button
+                        onClick={() => handleEdit(c)}
+                        className="text-emerald-600 hover:text-emerald-700 font-medium text-sm transition-colors"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(c.id)}
+                        className="text-red-500 hover:text-red-600 font-medium text-sm transition-colors"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {categories.length === 0 && (
+            <div className="p-8 text-center text-slate-500">
+              No categories found. Add your first category above!
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

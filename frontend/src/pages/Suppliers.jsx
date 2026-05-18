@@ -104,127 +104,119 @@ function Suppliers() {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>Suppliers</h1>
+    <div className="p-6">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold text-slate-800">Suppliers</h1>
+      </div>
 
-      {/* FORM */}
-      <form
-        onSubmit={handleSubmit}
-        style={{
-          marginBottom: "20px",
-          display: "flex",
-          flexDirection: "column",
-          gap: "10px",
-          maxWidth: "400px",
-        }}
-      >
-        <input
-          name="name"
-          placeholder="Name"
-          value={newSupplier.name}
-          onChange={handleChange}
-          required
-        />
-        <input
-          name="email"
-          type="email"
-          placeholder="Email"
-          value={newSupplier.email}
-          onChange={handleChange}
-        />
-        <input
-          name="phone"
-          placeholder="Phone"
-          value={newSupplier.phone}
-          onChange={handleChange}
-        />
-        <input
-          name="address"
-          placeholder="Address"
-          value={newSupplier.address}
-          onChange={handleChange}
-        />
-        <div style={{ display: "flex", gap: "10px" }}>
-          <button
-            type="submit"
-            style={{
-              backgroundColor: "#4CAF50",
-              color: "white",
-              padding: "10px",
-              border: "none",
-              cursor: "pointer",
-            }}
-          >
-            {editingId ? "Update Supplier" : "Add Supplier"}
-          </button>
-          {editingId && (
+      {/* FORM SECTION */}
+      <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 mb-8">
+        <h2 className="text-lg font-semibold mb-4 text-slate-700">
+          {editingId ? "Edit Supplier" : "Add New Supplier"}
+        </h2>
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <input
+            name="name"
+            placeholder="Supplier Name"
+            value={newSupplier.name}
+            onChange={handleChange}
+            required
+            className="border border-slate-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+          />
+          <input
+            name="email"
+            type="email"
+            placeholder="Email Address"
+            value={newSupplier.email}
+            onChange={handleChange}
+            className="border border-slate-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+          />
+          <input
+            name="phone"
+            placeholder="Phone Number"
+            value={newSupplier.phone}
+            onChange={handleChange}
+            className="border border-slate-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+          />
+          <input
+            name="address"
+            placeholder="Address"
+            value={newSupplier.address}
+            onChange={handleChange}
+            className="border border-slate-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+          />
+          <div className="md:col-span-2 flex gap-2">
             <button
-              type="button"
-              onClick={handleCancelEdit}
-              style={{
-                backgroundColor: "#f44336",
-                color: "white",
-                padding: "10px",
-                border: "none",
-                cursor: "pointer",
-              }}
+              type="submit"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors"
             >
-              Cancel
+              {editingId ? "Update Supplier" : "Add Supplier"}
             </button>
-          )}
-        </div>
-      </form>
+            {editingId && (
+              <button
+                type="button"
+                onClick={handleCancelEdit}
+                className="bg-slate-200 hover:bg-slate-300 text-slate-700 px-6 py-2 rounded-lg font-medium transition-colors"
+              >
+                Cancel
+              </button>
+            )}
+          </div>
+        </form>
+      </div>
 
-      {/* TABLE */}
-      <table
-        border="1"
-        cellPadding="10"
-        style={{ width: "100%", borderCollapse: "collapse", marginTop: "20px" }}
-      >
-        <thead style={{ backgroundColor: "#f2f2f2" }}>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>Address</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {suppliers.length > 0 ? (
-            suppliers.map((s) => (
-              <tr key={s.id}>
-                <td>{s.id}</td>
-                <td>{s.name}</td>
-                <td>{s.email}</td>
-                <td>{s.phone}</td>
-                <td>{s.address}</td>
-                <td>
-                  <button
-                    onClick={() => handleEdit(s)}
-                    style={{ marginRight: "10px", cursor: "pointer" }}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(s.id)}
-                    style={{ color: "red", cursor: "pointer" }}
-                  >
-                    Delete
-                  </button>
-                </td>
+      {/* TABLE SECTION */}
+      <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead className="bg-slate-50 text-slate-600 font-medium">
+              <tr>
+                <th className="p-4 border-b border-slate-200">ID</th>
+                <th className="p-4 border-b border-slate-200">Name</th>
+                <th className="p-4 border-b border-slate-200">Email</th>
+                <th className="p-4 border-b border-slate-200">Phone</th>
+                <th className="p-4 border-b border-slate-200">Address</th>
+                <th className="p-4 border-b border-slate-200 text-center">Actions</th>
               </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan="6" style={{ textAlign: "center" }}>
-                No suppliers found.
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {suppliers.length > 0 ? (
+                suppliers.map((s) => (
+                  <tr key={s.id} className="hover:bg-slate-50 transition-colors">
+                    <td className="p-4 text-slate-500 text-sm font-mono">{s.id}</td>
+                    <td className="p-4 font-medium text-slate-800">{s.name}</td>
+                    <td className="p-4 text-slate-600">{s.email || "-"}</td>
+                    <td className="p-4 text-slate-600">{s.phone || "-"}</td>
+                    <td className="p-4 text-slate-600">{s.address || "-"}</td>
+                    <td className="p-4 text-center">
+                      <div className="flex justify-center gap-4">
+                        <button
+                          onClick={() => handleEdit(s)}
+                          className="text-emerald-600 hover:text-emerald-700 font-medium text-sm transition-colors"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDelete(s.id)}
+                          className="text-red-500 hover:text-red-600 font-medium text-sm transition-colors"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="6" className="p-8 text-center text-slate-500">
+                    No suppliers found. Add your first supplier above!
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 }
