@@ -2,9 +2,11 @@ import { Link, useLocation } from "react-router-dom";
 
 function Sidebar() {
   const location = useLocation();
+  const email = localStorage.getItem("email") || "user@example.com";
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("email");
 
     window.location.href = "/login";
   };
@@ -119,22 +121,32 @@ function Sidebar() {
       </nav>
 
       <div className="mt-auto pt-6 border-t border-slate-800">
-        <div className="flex items-center gap-3 px-2">
-          <div className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-xs font-bold">
-            JD
+        <div className="flex flex-col gap-4 px-2">
+          <div className="overflow-hidden">
+            <p className="text-sm font-medium text-white truncate" title={email}>
+              {email}
+            </p>
           </div>
-          <div>
-            <p className="text-sm font-medium text-white">John Doe</p>
-            <p className="text-xs text-slate-500 italic">Inventory Intern</p>
-            <br />
-            <button
-              onClick={handleLogout}
-              className="bg-red-500 hover:bg-red-600
-             text-white px-4 py-2 rounded-lg"
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center justify-center gap-2 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white px-4 py-2.5 rounded-xl transition-all font-medium group"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
             >
-              Logout
-            </button>
-          </div>
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+              />
+            </svg>
+            Logout
+          </button>
         </div>
       </div>
     </div>

@@ -34,8 +34,9 @@ function Login() {
     try {
       const token = await login(formData);
 
-      // Store JWT
+      // Store JWT and Email
       localStorage.setItem("token", token);
+      localStorage.setItem("email", formData.email);
 
       navigate("/");
     } catch (err) {
