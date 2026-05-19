@@ -1,14 +1,14 @@
-import axios from "axios";
+import api from "./api.js"; // Use the custom api instance
 
-const API_URL = "http://localhost:8080/api/products";
+const API_URL = "/products"; // Use relative path
 
-export const getProducts = () => axios.get(API_URL);
+export const getProducts = () => api.get(API_URL);
 
 export const createProduct = (product) =>
-  axios.post(API_URL, product);
+  api.post(API_URL, product);
 
 export const updateProduct = (id, product) =>
-  axios.put(`${API_URL}/${id}`, product);
+  api.put(`${API_URL}/${id}`, product);
 
 export const deleteProduct = (id) =>
-  axios.delete(`${API_URL}/${id}`);
+  api.delete(`${API_URL}/${id}`);
