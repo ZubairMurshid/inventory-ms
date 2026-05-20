@@ -7,8 +7,11 @@ import {
   deleteProduct,
 } from "../services/productService.js";
 
+import { getCategories } from "../services/categoryService.js";
+
 function Products() {
   const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
 
   const [editingId, setEditingId] = useState(null);
 
@@ -19,6 +22,7 @@ function Products() {
     description: "",
     price: "",
     quantity: "",
+    category: null,
   });
 
   const fetchProducts = async () => {
@@ -31,19 +35,42 @@ function Products() {
     }
   };
 
+  const fetchCategories = async () => {
+    try {
+      const res = await getCategories();
+      setCategories(res.data);
+    } catch (err) {
+      console.error("Error fetching categories:", err);
+    }
+  };
+
   useEffect(() => {
     fetchProducts();
+    fetchCategories();
   }, []);
 
   const handleChange = (e) => {
-    setNewProduct({
-      ...newProduct,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+    if (name === "categoryId") {
+      setNewProduct({
+        ...newProduct,
+        category: value ? { id: parseInt(value, 10) } : null,
+      });
+    } else {
+      setNewProduct({
+        ...newProduct,
+        [name]: value,
+      });
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!newProduct.category) {
+      alert("Please select a category");
+      return;
+    }
 
     const productPayload = {
       ...newProduct,
@@ -61,6 +88,7 @@ function Products() {
           description: "",
           price: "",
           quantity: "",
+          category: null,
         });
       } catch (err) {
         alert("Failed to update product");
@@ -75,6 +103,7 @@ function Products() {
           description: "",
           price: "",
           quantity: "",
+          category: null,
         });
       } catch (err) {
         alert("Failed to create product");
@@ -102,6 +131,7 @@ function Products() {
       description: product.description,
       price: product.price,
       quantity: product.quantity,
+      category: product.category ? { id: product.category.id } : null,
     });
   };
 
@@ -112,6 +142,7 @@ function Products() {
       description: "",
       price: "",
       quantity: "",
+      category: null,
     });
   };
 
@@ -126,7 +157,7 @@ function Products() {
         <h2 className="text-lg font-semibold mb-4 text-slate-700">
           {editingId ? "Edit Product" : "Add New Product"}
         </h2>
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <input
             name="name"
             placeholder="Product Name"
@@ -143,6 +174,20 @@ function Products() {
             required
             className="border border-slate-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
           />
+          <select
+            name="categoryId"
+            value={newProduct.category?.id || ""}
+            onChange={handleChange}
+            required
+            className="border border-slate-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all bg-white"
+          >
+            <option value="">Select Category</option>
+            {categories.map((cat) => (
+              <option key={cat.id} value={cat.id}>
+                {cat.name}
+              </option>
+            ))}
+          </select>
           <input
             name="price"
             type="number"
@@ -161,7 +206,7 @@ function Products() {
             required
             className="border border-slate-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
           />
-          <div className="lg:col-span-4 flex gap-2">
+          <div className="lg:col-span-3 flex gap-2">
             <button
               type="submit"
               className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors"
@@ -199,6 +244,7 @@ function Products() {
               <tr>
                 <th className="p-4 border-b border-slate-200">ID</th>
                 <th className="p-4 border-b border-slate-200">Name</th>
+                <th className="p-4 border-b border-slate-200">Category</th>
                 <th className="p-4 border-b border-slate-200">Description</th>
                 <th className="p-4 border-b border-slate-200 text-right">Price</th>
                 <th className="p-4 border-b border-slate-200 text-right">Qty</th>
@@ -215,6 +261,11 @@ function Products() {
                   <tr key={p.id} className="hover:bg-slate-50 transition-colors">
                     <td className="p-4 text-slate-500 text-sm font-mono">{p.id}</td>
                     <td className="p-4 font-medium text-slate-800">{p.name}</td>
+                    <td className="p-4 text-slate-600">
+                      <span className="px-2 py-1 bg-blue-50 text-blue-600 rounded text-xs font-medium border border-blue-100">
+                        {p.category ? p.category.name : "Uncategorized"}
+                      </span>
+                    </td>
                     <td className="p-4 text-slate-600">{p.description}</td>
                     <td className="p-4 text-right text-slate-700 font-semibold">${p.price}</td>
                     <td className="p-4 text-right">

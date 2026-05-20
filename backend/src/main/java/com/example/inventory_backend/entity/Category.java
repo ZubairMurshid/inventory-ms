@@ -21,7 +21,9 @@ public class Category {
 
     private String name;
 
-    private String description;
+    @ManyToOne
+    @JoinColumn(name = "primary_supplier_id")
+    private Supplier primarySupplier;
 
     @JsonIgnore
     @OneToMany(mappedBy = "category")

@@ -2,7 +2,9 @@ package com.example.inventory_backend.service;
 
 import com.example.inventory_backend.entity.Product;
 import com.example.inventory_backend.repository.ProductRepository;
+import com.example.inventory_backend.repository.StockTransactionRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,9 +13,11 @@ import java.util.Optional;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final StockTransactionRepository stockTransactionRepository;
 
-    public ProductService(ProductRepository productRepository) {
+    public ProductService(ProductRepository productRepository, StockTransactionRepository stockTransactionRepository) {
         this.productRepository = productRepository;
+        this.stockTransactionRepository = stockTransactionRepository;
     }
 
     public Product createProduct(Product product) {
@@ -43,7 +47,9 @@ public class ProductService {
                 .orElseThrow(() -> new RuntimeException("Product not found"));
     }
 
+    @Transactional
     public void deleteProduct(Long id) {
+        stockTransactionRepository.deleteByProductId(id);
         productRepository.deleteById(id);
     }
 }

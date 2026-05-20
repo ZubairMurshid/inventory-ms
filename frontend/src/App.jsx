@@ -14,6 +14,7 @@ import Dashboard from "./pages/Dashboard";
 import Products from "./pages/Products";
 import Categories from "./pages/Categories";
 import Suppliers from "./pages/Suppliers";
+import Transactions from "./pages/Transactions";
 
 function App() {
   return (
@@ -64,6 +65,17 @@ function App() {
             <ProtectedRoute>
               <DashboardLayout>
                 <Suppliers />
+              </DashboardLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/transactions"
+          element={
+            <ProtectedRoute>
+              <DashboardLayout>
+                <Transactions />
               </DashboardLayout>
             </ProtectedRoute>
           }

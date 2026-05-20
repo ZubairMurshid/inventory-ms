@@ -39,7 +39,6 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // 1. ENABLE CORS IN SPRING SECURITY
                 .cors(Customizer.withDefaults())
 
                 .csrf(csrf -> csrf.disable())

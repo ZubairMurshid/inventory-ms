@@ -6,13 +6,15 @@ import {
   updateCategory,
   deleteCategory,
 } from "../services/categoryService.js";
+import { getSuppliers } from "../services/supplierService.js";
 
 function Categories() {
   const [categories, setCategories] = useState([]);
+  const [suppliers, setSuppliers] = useState([]);
   const [editingId, setEditingId] = useState(null);
   const [newCategory, setNewCategory] = useState({
     name: "",
-    description: "",
+    primarySupplier: null,
   });
 
   const fetchCategories = async () => {
@@ -25,15 +27,33 @@ function Categories() {
     }
   };
 
+  const fetchSuppliers = async () => {
+    try {
+      const res = await getSuppliers();
+      setSuppliers(res.data);
+    } catch (err) {
+      console.error("Error fetching suppliers:", err);
+    }
+  };
+
   useEffect(() => {
     fetchCategories();
+    fetchSuppliers();
   }, []);
 
   const handleChange = (e) => {
-    setNewCategory({
-      ...newCategory,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+    if (name === "primarySupplierId") {
+      setNewCategory({
+        ...newCategory,
+        primarySupplier: value ? { id: parseInt(value, 10) } : null,
+      });
+    } else {
+      setNewCategory({
+        ...newCategory,
+        [name]: value,
+      });
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -46,7 +66,7 @@ function Categories() {
         setEditingId(null);
         setNewCategory({
           name: "",
-          description: "",
+          primarySupplier: null,
         });
       } catch (err) {
         alert("Failed to update category");
@@ -58,7 +78,7 @@ function Categories() {
         fetchCategories();
         setNewCategory({
           name: "",
-          description: "",
+          primarySupplier: null,
         });
       } catch (err) {
         alert("Failed to create category");
@@ -83,7 +103,7 @@ function Categories() {
     setEditingId(category.id);
     setNewCategory({
       name: category.name,
-      description: category.description,
+      primarySupplier: category.primarySupplier ? { id: category.primarySupplier.id } : null,
     });
   };
 
@@ -91,7 +111,7 @@ function Categories() {
     setEditingId(null);
     setNewCategory({
       name: "",
-      description: "",
+      primarySupplier: null,
     });
   };
 
@@ -115,14 +135,19 @@ function Categories() {
             required
             className="border border-slate-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
           />
-          <input
-            name="description"
-            placeholder="Description"
-            value={newCategory.description}
+          <select
+            name="primarySupplierId"
+            value={newCategory.primarySupplier?.id || ""}
             onChange={handleChange}
-            required
-            className="border border-slate-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
-          />
+            className="border border-slate-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all bg-white"
+          >
+            <option value="">No Primary Supplier</option>
+            {suppliers.map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.name}
+              </option>
+            ))}
+          </select>
           <div className="md:col-span-2 flex gap-2">
             <button
               type="submit"
@@ -151,7 +176,7 @@ function Categories() {
               <tr>
                 <th className="p-4 border-b border-slate-200 w-24">ID</th>
                 <th className="p-4 border-b border-slate-200">Name</th>
-                <th className="p-4 border-b border-slate-200">Description</th>
+                <th className="p-4 border-b border-slate-200">Primary Supplier</th>
                 <th className="p-4 border-b border-slate-200 text-center w-40">Actions</th>
               </tr>
             </thead>
@@ -161,7 +186,7 @@ function Categories() {
                 <tr key={c.id} className="hover:bg-slate-50 transition-colors">
                   <td className="p-4 text-slate-500 text-sm font-mono">{c.id}</td>
                   <td className="p-4 font-medium text-slate-800">{c.name}</td>
-                  <td className="p-4 text-slate-600">{c.description}</td>
+                  <td className="p-4 text-slate-600">{c.primarySupplier ? c.primarySupplier.name : "N/A"}</td>
                   <td className="p-4 text-center">
                     <div className="flex justify-center gap-4">
                       <button

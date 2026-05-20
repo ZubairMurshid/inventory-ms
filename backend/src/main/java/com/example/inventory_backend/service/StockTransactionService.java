@@ -1,8 +1,11 @@
 package com.example.inventory_backend.service;
 
+import com.example.inventory_backend.entity.Product;
 import com.example.inventory_backend.entity.StockTransaction;
+import com.example.inventory_backend.repository.ProductRepository;
 import com.example.inventory_backend.repository.StockTransactionRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,13 +14,35 @@ import java.util.Optional;
 public class StockTransactionService {
 
     private final StockTransactionRepository transactionRepository;
+    private final ProductRepository productRepository;
 
-    public StockTransactionService(StockTransactionRepository transactionRepository) {
+    public StockTransactionService(StockTransactionRepository transactionRepository, ProductRepository productRepository) {
         this.transactionRepository = transactionRepository;
+        this.productRepository = productRepository;
     }
 
     // CREATE
+    @Transactional
     public StockTransaction createTransaction(StockTransaction transaction) {
+        if (transaction.getProduct() == null || transaction.getProduct().getId() == null) {
+            throw new RuntimeException("Product is required for a transaction");
+        }
+
+        Product product = productRepository.findById(transaction.getProduct().getId())
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        if ("IN".equalsIgnoreCase(transaction.getType())) {
+            product.setQuantity(product.getQuantity() + transaction.getQuantity());
+        } else if ("OUT".equalsIgnoreCase(transaction.getType())) {
+            if (product.getQuantity() < transaction.getQuantity()) {
+                throw new RuntimeException("Insufficient stock for this transaction");
+            }
+            product.setQuantity(product.getQuantity() - transaction.getQuantity());
+        } else {
+            throw new RuntimeException("Invalid transaction type. Must be IN or OUT.");
+        }
+
+        productRepository.save(product);
         return transactionRepository.save(transaction);
     }
 
